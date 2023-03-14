@@ -5,13 +5,12 @@ header = r'(\w+)(?:{(?:(\d+)|(\d+),(\d+))}(?:::(\w+))?)?'
 
 class Header:
     def __init__(self, name, num, min, max, agg):
-        self.name = name
+        self.name = f"{name}_{agg}" if agg else name
         self.list = num or min or max
         
         if self.list:
             self.min = int(num if num else min)
             self.max = int(num if num else max)
-            self.aggregate_name = "_" + agg if agg else ""
             self.aggregate = {"sum": sum, \
                               "media": lambda l: sum (l) / len(l), \
                               "": lambda x: x \
@@ -29,7 +28,7 @@ class Header:
                 if val != "":
                     aux.append(int(val))
             
-            return {self.name + self.aggregate_name: self.aggregate(aux)}
+            return {self.name: self.aggregate(aux)}
         else:
             return {self.name: next(cell_iterator)}
 
